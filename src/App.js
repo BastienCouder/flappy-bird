@@ -1,24 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import { Unity, useUnityContext } from "react-unity-webgl";
 
 function App() {
+  const { unityProvider } = useUnityContext({
+    loaderUrl: "./flappyBird/build/flappyBird.loader.js",
+    dataUrl: "./flappyBird/build/flappyBird.data",
+    frameworkUrl: "./flappyBird/build/flappyBird.framework.js",
+    codeUrl: "./flappyBird/build/flappyBird.wasm",
+  });
+
+  const [dimensions, setDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    function handleResize() {
+      // Adjust dimensions as needed here
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Unity
+      unityProvider={unityProvider}
+      style={{
+        width: `${dimensions.width}px`,
+        height: `${dimensions.height}px`,
+        justifySelf: "center",
+        alignSelf: "center",
+      }}
+    />
   );
 }
 
